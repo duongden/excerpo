@@ -1,8 +1,5 @@
 <div align="center">
 
-<!-- BẠN THÊM LINK ẢNH BANNER HOẶC LOGO VÀO BÊN DƯỚI -->
-<img src="https://via.placeholder.com/600x200.png?text=Banner+Excerpo+(Thay+link+anh+vao+day)" alt="Excerpo Banner" />
-
 # 📖 Excerpo
 **Công cụ trích xuất và tải truyện/text tự động từ đa nền tảng**
 
@@ -18,14 +15,16 @@
 Mục đích chính của công cụ là phục vụ cho nhu cầu lưu trữ offline cá nhân, nghiên cứu kỹ thuật xử lý ngôn ngữ và hỗ trợ dịch thuật tự động.
 
 ## 📷 Ảnh chụp màn hình
-<div align="center">
-  <img src="images/cao.jpg" width="400" alt="Giao diện Cào">
-  <img src="images/doi.jpg" width="400" alt="Hàng đợi tải ngầm">
-</div>
-<div align="center">
-  <img src="images/cai_dat.jpg" width="400" alt="Cài đặt">
-  <img src="images/luu_y.jpg" width="400" alt="Lưu ý">
-</div>
+
+<p align="center">
+  <img src="images/z7927269071833_b959820cf9183640c0d4d359a7e89863.jpg" width="400" alt="Giao diện Cào">
+  <img src="images/z7927269022338_77ce97ec5bec0ea8be67eb4816ea4a4b.jpg" width="400" alt="Hàng đợi tải ngầm">
+</p>
+
+<p align="center">
+  <img src="images/z7927269071829_85bef00b8acf6c77b2f30d36422cfd45.jpg" width="400" alt="Cài đặt">
+  <img src="images/z7927269122181_8c444270eec616307d21d0df4c4ab569.jpg" width="400" alt="Lưu ý">
+</p>
 
 ## 🚀 Tính năng nổi bật
 * **Đa nền tảng:** Hỗ trợ quét và tải mượt mà từ nhiều website lớn như: `17k`, `qidian`, `jjwxc`, `biquge`, `52shuku`, `fanqienovel`, `uukanshu`...
