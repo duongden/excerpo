@@ -219,7 +219,7 @@ async function renderChapters(source, chapters, bookName, chapterDiv, tabId, url
           <div style="font-size:11px;padding:4px 8px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:6px;width:100%;min-width:0;">
             <input type="checkbox" class="chap-checkbox" data-idx="${idx}" ${isChecked ? 'checked' : ''}>
             <span style="color:#999;min-width:30px;">#${c.chapter_number}</span>
-            <a href="${c.chapter_url}" target="_blank" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#1a73e8;">
+            <a href="${c.chapter_url}" target="_blank" style="flex:1;min-width:0;word-break:break-word;color:#1a73e8;text-decoration:none;line-height:1.3;padding:2px 0;">
               ${c.chapter_title}
             </a>
             <span style="width:20px;text-align:center;flex-shrink:0;">${icon}</span>
