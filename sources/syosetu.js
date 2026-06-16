@@ -1,6 +1,6 @@
 const SourceSyosetu = {
   name: "syosetu",
-  pattern: /ncode\.syosetu\.com\/([^\/]+)/,
+  pattern: /(?:ncode|novel18)\.syosetu\.com\/([^\/]+)/,
 
   // ── Preview config ─────────────────────────────────────────────────────────
   preview: {
@@ -41,8 +41,9 @@ const SourceSyosetu = {
       const elements = [...doc.querySelectorAll(".p-eplist__sublist a.p-eplist__subtitle, .p-eplist__subtitle")];
       return elements.map((el, i) => {
         const href = el.getAttribute('href') || '';
+        const host = new URL(url).origin;
         const fullUrl = href.startsWith('/')
-          ? `https://ncode.syosetu.com${href}`
+          ? `${host}${href}`
           : href;
         return {
           chapter_number: i + 1,
