@@ -74,11 +74,22 @@ const SourceBookQQ = {
   },
 
   // ── Content config ─────────────────────────────────────────────────────────
-  content: {
-    readySelector: "#article.chapter-content",
-    type:          "paragraphs",
-    selector:      "#article.chapter-content",
-    remove:        [".chapter-ad", ".chapter-reward", ".chapter-comment"]
+  content: (chapter) => {
+    if (chapter && chapter.type === "vip") {
+      return {
+        readySelector: "#article.chapter-content",
+        type:          "ocr",
+        selector:      "#article.chapter-content",
+        remove:        [".chapter-ad", ".chapter-reward", ".chapter-comment"],
+        scriptUrl:     "https://html2canvas.hertzen.com/dist/html2canvas.min.js"
+      };
+    }
+    return {
+      readySelector: "#article.chapter-content",
+      type:          "paragraphs",
+      selector:      "#article.chapter-content",
+      remove:        [".chapter-ad", ".chapter-reward", ".chapter-comment"]
+    };
   },
 
   // ── Public API ─────────────────────────────────────────────────────────────

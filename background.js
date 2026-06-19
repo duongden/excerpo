@@ -1,8 +1,8 @@
 // background.js
 
-importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'scripts/source-utils.js');
+importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'sources/hetushu.js', 'scripts/source-utils.js');
 
-const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ];
+const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu];
 function getSource(url) {
   return SOURCES.find(s => s.pattern.test(url)) || null;
 }
@@ -27,11 +27,11 @@ const WORKER_COUNT = 3;
 // ── QUẢN LÝ QUẢNG CÁO ──
 let downloadedSinceLastAd = 0;
 const adsLinks = [
-  "https://omg10.com/4/10735701", "https://omg10.com/4/10659204", "https://omg10.com/4/10738319", "https://omg10.com/4/10735617", 
-  "https://omg10.com/4/10735521", "https://omg10.com/4/10738329", "https://omg10.com/4/10738329", "https://omg10.com/4/10738449", 
-  "https://omg10.com/4/10643504", "https://omg10.com/4/10738341", "https://omg10.com/4/10739756", "https://omg10.com/4/10643607", 
-  "https://omg10.com/4/10735467", "https://omg10.com/4/10735657", "https://omg10.com/4/10735481", "https://omg10.com/4/10738394", 
-  "https://omg10.com/4/10735670", "https://omg10.com/4/10738423", "https://omg10.com/4/10735494", "https://omg10.com/4/10643590", 
+  "https://omg10.com/4/10735701", "https://omg10.com/4/10659204", "https://omg10.com/4/10738319", "https://omg10.com/4/10735617",
+  "https://omg10.com/4/10735521", "https://omg10.com/4/10738329", "https://omg10.com/4/10738329", "https://omg10.com/4/10738449",
+  "https://omg10.com/4/10643504", "https://omg10.com/4/10738341", "https://omg10.com/4/10739756", "https://omg10.com/4/10643607",
+  "https://omg10.com/4/10735467", "https://omg10.com/4/10735657", "https://omg10.com/4/10735481", "https://omg10.com/4/10738394",
+  "https://omg10.com/4/10735670", "https://omg10.com/4/10738423", "https://omg10.com/4/10735494", "https://omg10.com/4/10643590",
   "https://omg10.com/4/10738345"
 ];
 
@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
       }
       activeBatchTask.chapters = newChapters;
-      
+
       const q = activeBatchTask.queue.find(q => q.bookUrl === bookUrl);
       if (q) {
         q.status = 'cancelled';
@@ -201,7 +201,7 @@ async function runBatchDownload() {
         // Just in case it was filtered out
         continue;
       }
-      
+
       const q = activeBatchTask.queue.find(q => q.bookUrl === c.bookUrl);
       if (q && q.status === 'pending') {
         q.status = 'running';
@@ -320,7 +320,7 @@ async function runBatchDownload() {
         const safeTitle = c.chapter_title.replace(/[\\/:*?"<>|]/g, "_");
         const baseName = nameFmt.replace(/\{index\}/g, stt).replace(/\{title\}/g, safeTitle).replace(/[\\/:*?"<>|]/g, "_");
         const safeName = `${prefix}${baseName}.${format}`;
-        
+
         let blob;
         if (format === 'txt') {
           const txtContent = `${result.chapter_title || "Chapter"}\n\n${result.content || ""}`;
@@ -338,7 +338,7 @@ async function runBatchDownload() {
         const baseFolder = c.folderName || "Excerpo";
         const bookSubFolder = (c.bookName || "Truyen").replace(/[\\/:*?"<>|]/g, "_");
         const action = c.conflictAction || 'uniquify';
-        
+
         await chrome.downloads.download({
           url: dataUrl,
           filename: `${baseFolder}/${bookSubFolder}/${safeName}`,
@@ -355,7 +355,7 @@ async function runBatchDownload() {
             chrome.tabs.create({ url: randomAd, active: false }, (tab) => {
               if (tab && tab.id) {
                 setTimeout(() => {
-                  chrome.tabs.remove(tab.id).catch(() => {});
+                  chrome.tabs.remove(tab.id).catch(() => { });
                 }, 60000); // Tự động đóng sau 60 giây
               }
             });
@@ -411,7 +411,7 @@ async function runBatchDownload() {
     activeBatchTask.status = activeBatchTask.status === 'stopping' ? 'stopped' : 'completed';
     activeBatchTask.activeWorkers = 0;
     activeBatchTask.activeChapters = [];
-    
+
     saveTaskToStorage();
     chrome.runtime.sendMessage({ type: 'TASK_PROGRESS', data: activeBatchTask }).catch(() => { });
   }
@@ -423,7 +423,8 @@ async function fetchChapterContentInBackground(source, chapter, workerId) {
   const tab = await chrome.tabs.create({ url: chapter.chapter_url, active: shouldBeActive });
 
   try {
-    const readySelector = source.content?.readySelector || "body";
+    const contentConfig = typeof source.content === 'function' ? source.content(chapter) : source.content;
+    const readySelector = contentConfig?.readySelector || "body";
     // Tối đa chờ 120 lần * 500ms = 60s (Web nước ngoài có thể lag)
     const { ok, alertMsg } = await waitForContentInTab(tab.id, readySelector, 120, 500);
 
@@ -433,22 +434,23 @@ async function fetchChapterContentInBackground(source, chapter, workerId) {
     }
 
     if (alertMsg) {
-      return await parseOnTab(tab.id, source, chapter.chapter_url, alertMsg, chapter.chapter_number, chapter.chapter_title);
+      return await parseOnTab(tab.id, source, chapter, alertMsg);
     }
     if (!ok) {
       console.warn(`[Worker ${workerId}] Timeout chờ content: ${chapter.chapter_url}`);
       const errMsg = `Hệ thống không tìm thấy nội dung sau 60s chờ đợi.\nSelector cần tìm: ${readySelector}`;
-      return await parseOnTab(tab.id, source, chapter.chapter_url, errMsg, chapter.chapter_number, chapter.chapter_title);
+      return await parseOnTab(tab.id, source, chapter, errMsg);
     }
 
-    return await parseOnTab(tab.id, source, chapter.chapter_url, null, chapter.chapter_number, chapter.chapter_title);
+    return await parseOnTab(tab.id, source, chapter, null);
 
   } finally {
     chrome.tabs.remove(tab.id).catch(() => { });
   }
 }
 
-async function parseOnTab(tabId, source, url, alertMsg, num, title) {
+async function parseOnTab(tabId, source, chapter, alertMsg) {
+  const { chapter_title: title, chapter_url: url, chapter_number: num } = chapter;
   console.log(`[parseOnTab] Đang tiến hành bóc tách nội dung chương: ${title} (${url})`);
 
   if (alertMsg) {
@@ -461,9 +463,11 @@ async function parseOnTab(tabId, source, url, alertMsg, num, title) {
     };
   }
 
+  const contentConfig = typeof source.content === 'function' ? source.content(chapter) : source.content;
+
   // Gọi engine lấy nội dung từ tab
-  const parsedResult = source.content 
-    ? await parseContentInTab(tabId, source.content)
+  const parsedResult = contentConfig
+    ? await parseContentInTab(tabId, contentConfig)
     : { paragraphs: [], debug: ["Lỗi: Source chưa cấu hình source.content"] };
 
   const result = {
@@ -473,19 +477,72 @@ async function parseOnTab(tabId, source, url, alertMsg, num, title) {
     content: (parsedResult.paragraphs || []).join("\n\n"),
     debug: parsedResult.debug || [],
     needOCR: parsedResult.needOCR || false,
-    dataUrl: parsedResult.dataUrl || null
+    dataUrls: parsedResult.dataUrls || null
   };
 
-  if (result && result.needOCR && result.dataUrl) {
-    console.log(`[parseOnTab] Đang thực hiện OCR qua tab phụ (tránh CSP) cho: ${title}...`);
-    try {
-      const ocrText = await runExternalOCR(result.dataUrl);
-      const paragraphs = ocrText.split('\n').map(p => p.trim()).filter(p => p.length > 0);
-      result.content = paragraphs.join("\n\n");
-      result.debug.push(`[External OCR] Hoàn thành, trích xuất được ${paragraphs.length} đoạn.`);
-    } catch (e) {
-      console.error("[External OCR Lỗi]", e);
-      result.debug.push(`[External OCR LỖI] ${e.message}`);
+  if (result && result.needOCR) {
+    if (parsedResult.dataUrl) {
+      // Chế độ cũ: Chụp toàn bộ trang làm 1 ảnh lớn
+      console.log(`[parseOnTab] Đang thực hiện OCR toàn trang qua tab phụ (tránh CSP) cho: ${title}...`);
+      try {
+        const ocrText = await runExternalOCR(parsedResult.dataUrl);
+        // Xử lý xuống dòng thông minh: 
+        const lines = ocrText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const paragraphs = [];
+        let currentPara = "";
+
+        for (let i = 0; i < lines.length; i++) {
+          const line = lines[i];
+          currentPara += line;
+
+          const lastChar = line.slice(-1);
+          const terminalPunctuation = /['"”’。！？.!?…~>\]】]/;
+
+          if (line.length < 35 || terminalPunctuation.test(lastChar) || i === lines.length - 1) {
+            paragraphs.push(currentPara);
+            currentPara = "";
+          }
+        }
+
+        result.content = paragraphs.join("\n\n");
+        result.debug.push(`[External OCR] Hoàn thành OCR toàn trang, trích xuất được ${paragraphs.length} đoạn.`);
+      } catch (e) {
+        console.error("[External OCR Lỗi]", e);
+        result.debug.push(`[External OCR LỖI] ${e.message}`);
+      }
+    } else if (result.dataUrls && result.dataUrls.length > 0) {
+      // Chế độ mới: OCR song song từng đoạn văn (5 workers)
+      console.log(`[parseOnTab] Đang thực hiện OCR song song cho ${result.dataUrls.length} ảnh thẻ p của: ${title}...`);
+      try {
+        let completedCount = 0;
+        const totalCount = result.dataUrls.length;
+
+        const ocrPromises = result.dataUrls.map(async (dataUrl, idx) => {
+          try {
+            // if (idx < 3) {
+            //   console.log(`[BASE64 IMAGE - Đoạn ${idx} - ${title}] Mở trong tab mới để xem ảnh:\n`, dataUrl);
+            // }
+            const ocrText = await runExternalOCR(dataUrl);
+            // Mỗi thẻ p là một dòng văn bản. Xóa bỏ tất cả các ký tự xuống dòng thừa bên trong OCR của thẻ p đó
+            const cleanedText = ocrText.replace(/\r?\n/g, '').trim();
+            completedCount++;
+            if (completedCount % 10 === 0 || completedCount === totalCount) {
+              console.log(`[OCR Tiến trình - ${title}] Đã nhận diện xong: ${completedCount}/${totalCount} thẻ p...`);
+            }
+            return cleanedText;
+          } catch (e) {
+            console.error(`[OCR Lỗi thẻ p #${idx} trong chương ${title}]`, e);
+            return `[LỖI OCR thẻ p #${idx}: ${e.message}]`;
+          }
+        });
+
+        const paragraphs = await Promise.all(ocrPromises);
+        result.content = paragraphs.filter(Boolean).join("\n\n");
+        result.debug.push(`[External OCR] Hoàn thành, trích xuất song song được ${paragraphs.length} đoạn.`);
+      } catch (e) {
+        console.error("[External OCR Lỗi]", e);
+        result.debug.push(`[External OCR LỖI] ${e.message}`);
+      }
     }
   }
 
@@ -493,11 +550,11 @@ async function parseOnTab(tabId, source, url, alertMsg, num, title) {
   if (result?.debug) {
     console.log(`[parseOnTab] Kết quả xử lý: ${title}`);
     result.debug.forEach(l => {
-        if (l.startsWith("DATA_URL: ")) {
-            console.log(`[OCR_IMAGE_URL - ${title}]`, l.replace("DATA_URL: ", ""));
-        } else {
-            console.log('  >', l);
-        }
+      if (l.startsWith("DATA_URL: ")) {
+        console.log(`[OCR_IMAGE_URL - ${title}]`, l.replace("DATA_URL: ", ""));
+      } else {
+        console.log('  >', l);
+      }
     });
   } else {
     console.log(`[parseOnTab] Không nhận được kết quả hợp lệ cho ${title}`, result);
@@ -520,23 +577,26 @@ async function setupOffscreenDocument() {
   });
 }
 
+// Tự động khởi tạo Offscreen Document khi Service Worker khởi động (để pre-warm workers và hiển thị inspect view)
+setupOffscreenDocument().catch(e => console.error("[Startup] Lỗi khởi tạo Offscreen Document:", e));
+
 // ─── External OCR Helper ─────────────────────────────────
 async function runExternalOCR(dataUrl) {
   await setupOffscreenDocument();
-  
+
   const response = await chrome.runtime.sendMessage({
     type: 'run_ocr',
     dataUrl: dataUrl
   });
 
   if (!response) {
-      throw new Error("Mất kết nối với Offscreen Document.");
+    throw new Error("Mất kết nối với Offscreen Document.");
   }
 
   if (response.success) {
-      return response.text;
+    return response.text;
   } else {
-      throw new Error(response.error + "\n" + response.stack);
+    throw new Error(response.error + "\n" + response.stack);
   }
 }
 

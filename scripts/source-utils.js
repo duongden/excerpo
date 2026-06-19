@@ -186,6 +186,32 @@ async function parseContentInTab(tabId, contentConfig) {
           return { paragraphs: lines };
         }
 
+        if (t === 'hetushu') {
+          const divs = Array.from(container.children).filter(el => el.tagName === 'DIV');
+          debug.push(`[hetushu] found ${divs.length} direct divs`);
+          if (!divs.length) return null;
+
+          // Lọc các div chứa chữ và không bị ẩn
+          const visibleDivs = divs.filter(d => {
+            const display = window.getComputedStyle(d).display;
+            return d.textContent.trim().length > 0 && display !== 'none';
+          });
+
+          // Sắp xếp các div theo tọa độ hiển thị thực tế trên màn hình (đầu tiên là chiều dọc y, sau đó là x nếu xấp xỉ bằng nhau)
+          visibleDivs.sort((a, b) => {
+            const rectA = a.getBoundingClientRect();
+            const rectB = b.getBoundingClientRect();
+            if (Math.abs(rectA.top - rectB.top) > 5) {
+              return rectA.top - rectB.top;
+            }
+            return rectA.left - rectB.left;
+          });
+
+          const paragraphs = visibleDivs.map(d => d.textContent.trim()).filter(Boolean);
+          debug.push(`[hetushu] sorted and extracted ${paragraphs.length} paragraphs`);
+          return { paragraphs };
+        }
+
         if (t === 'custom') {
           const idMatch = location.href.match(/id=(\d+)/);
           if (!idMatch) {
@@ -235,19 +261,94 @@ async function parseContentInTab(tabId, contentConfig) {
             await document.fonts.ready;
             await new Promise(r => setTimeout(r, 500));
             logs.push("-> Fonts sẵn sàng!");
-            logs.push("3. Chụp ảnh...");
-            const canvas = await withTimeout(
+            
+            // Xóa phần review rác và quảng cáo trước khi đưa vào ocr
+            if (removeArr && removeArr.length) {
+              const toRemove = removeArr.join(",");
+              logs.push(`-> Xóa rác với selector: ${toRemove}`);
+              container.querySelectorAll(toRemove).forEach(e => e.remove());
+            }
+
+            // Chọn các phần tử p làm dòng/đoạn
+            let ps = Array.from(container.querySelectorAll("p")).filter(p => p.textContent.trim().length > 0);
+            if (ps.length === 0) {
+              // Fallback 1: Lấy các div lá chứa text
+              ps = Array.from(container.querySelectorAll("div")).filter(d => !d.querySelector("p, div") && d.textContent.trim().length > 0);
+            }
+            if (ps.length === 0) {
+              // Fallback 2: Lấy toàn bộ container
+              ps = [container];
+            }
+
+            logs.push(`-> Tìm thấy ${ps.length} phần tử để OCR.`);
+
+            // Hàm đệ quy xóa khoảng trắng (space và full-width space) trong text nodes để tránh Tesseract ảo giác
+            function removeSpaces(node) {
+              if (node.nodeType === 3) { // Text node
+                node.nodeValue = node.nodeValue.replace(/[ \u3000\t\n]/g, '');
+              } else {
+                node.childNodes.forEach(removeSpaces);
+              }
+            }
+
+            // Chuẩn hóa giao diện từng đoạn để Tesseract nhận dạng tốt nhất
+            ps.forEach(el => {
+              removeSpaces(el);
+              el.style.lineHeight = '1.5';
+              el.style.padding = '15px'; // Tạo viền trắng dày xung quanh chữ
+              el.style.marginBottom = '40px'; // Cô lập hoàn toàn với đoạn dưới
+              el.style.marginTop = '0';
+              el.style.backgroundColor = '#ffffff';
+              el.style.color = '#000000';
+              el.style.borderRadius = '0';
+              el.style.border = 'none';
+            });
+
+            // Thay vì render từng thẻ p (làm treo trình duyệt do html2canvas parse DOM nhiều lần),
+            // ta chụp toàn bộ container 1 lần duy nhất, sau đó cắt ảnh dựa trên tọa độ.
+            logs.push("3. Chụp ảnh toàn bộ nội dung container...");
+            const scale = 2;
+            const bigCanvas = await withTimeout(
               html2canvas(container, {
-                scale: 2, useCORS: true, allowTaint: true,
+                scale: scale, useCORS: true, allowTaint: true,
                 logging: false, backgroundColor: '#ffffff',
               }),
-              30000, "html2canvas render"
+              30000, "html2canvas render container"
             );
-            const dataUrl = canvas.toDataURL('image/png');
-            logs.push(`-> Ảnh ${dataUrl.length} ký tự base64`);
-            logs.push("-> Yêu cầu OCR ở tab an toàn (tránh CSP).");
+
+            logs.push("4. Tiến hành cắt ảnh theo từng phần tử...");
+            const dataUrls = [];
+            const containerRect = container.getBoundingClientRect();
+
+            for (let i = 0; i < ps.length; i++) {
+              const p = ps[i];
+              const rect = p.getBoundingClientRect();
+
+              // Tính toán tọa độ tương đối so với container
+              const x = (rect.left - containerRect.left) * scale;
+              const y = (rect.top - containerRect.top) * scale;
+              const width = rect.width * scale;
+              const height = rect.height * scale;
+
+              if (width <= 0 || height <= 0) continue;
+
+              const pCanvas = document.createElement("canvas");
+              pCanvas.width = width;
+              pCanvas.height = height;
+              const ctx = pCanvas.getContext("2d");
+              
+              // Fill nền trắng trước khi vẽ
+              ctx.fillStyle = "#ffffff";
+              ctx.fillRect(0, 0, width, height);
+              // Copy mảng ảnh tương ứng từ bigCanvas sang
+              ctx.drawImage(bigCanvas, x, y, width, height, 0, 0, width, height);
+              
+              dataUrls.push(pCanvas.toDataURL('image/png'));
+            }
+
+            logs.push(`-> Đã chụp và cắt xong ${dataUrls.length} ảnh phần tử.`);
             debug.push(...logs);
-            return { paragraphs: [], dataUrl, logs, needOCR: true };
+            return { paragraphs: [], dataUrls, logs, needOCR: true };
           } catch (err) {
             logs.push(`LỖI: ${err.message}`);
             debug.push(...logs);
