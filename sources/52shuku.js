@@ -1,6 +1,6 @@
 const Source52shuku = {
   name: "52shuku",
-  pattern: /52shuku\.net\/wenxue\/.*\.html/,
+  pattern: /52shuku\.net\/[^/]+\/.*\.html/,
 
   // ── Preview config ─────────────────────────────────────────────────────────
   preview: {
