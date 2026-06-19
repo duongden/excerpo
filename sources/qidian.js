@@ -47,11 +47,22 @@ const SourceQidian = {
   },
 
   // ── Content config ─────────────────────────────────────────────────────────
-  content: {
-    readySelector: "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
-    type:          "paragraphs",
-    selector:      "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
-    remove:        [".review"]
+  content: (chapter) => {
+    if (chapter && chapter.type === "vip") {
+      return {
+        readySelector: "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
+        type:          "ocr",
+        selector:      "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
+        remove:        [".review"],
+        scriptUrl:     "https://html2canvas.hertzen.com/dist/html2canvas.min.js"
+      };
+    }
+    return {
+      readySelector: "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
+      type:          "paragraphs",
+      selector:      "main.content | .main-text-wrap .read-content | .read-content.j_readContent",
+      remove:        [".review"]
+    };
   },
 
   // ── Public API ─────────────────────────────────────────────────────────────
