@@ -186,6 +186,32 @@ async function parseContentInTab(tabId, contentConfig) {
           return { paragraphs: lines };
         }
 
+        if (t === 'hetushu') {
+          const divs = Array.from(container.children).filter(el => el.tagName === 'DIV');
+          debug.push(`[hetushu] found ${divs.length} direct divs`);
+          if (!divs.length) return null;
+
+          // Lọc các div chứa chữ và không bị ẩn
+          const visibleDivs = divs.filter(d => {
+            const display = window.getComputedStyle(d).display;
+            return d.textContent.trim().length > 0 && display !== 'none';
+          });
+
+          // Sắp xếp các div theo tọa độ hiển thị thực tế trên màn hình (đầu tiên là chiều dọc y, sau đó là x nếu xấp xỉ bằng nhau)
+          visibleDivs.sort((a, b) => {
+            const rectA = a.getBoundingClientRect();
+            const rectB = b.getBoundingClientRect();
+            if (Math.abs(rectA.top - rectB.top) > 5) {
+              return rectA.top - rectB.top;
+            }
+            return rectA.left - rectB.left;
+          });
+
+          const paragraphs = visibleDivs.map(d => d.textContent.trim()).filter(Boolean);
+          debug.push(`[hetushu] sorted and extracted ${paragraphs.length} paragraphs`);
+          return { paragraphs };
+        }
+
         if (t === 'custom') {
           const idMatch = location.href.match(/id=(\d+)/);
           if (!idMatch) {

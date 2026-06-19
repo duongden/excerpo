@@ -1,4 +1,4 @@
-const WORKER_COUNT = 5;
+const WORKER_COUNT = 10;
 const workerPool = [];
 const taskQueue = [];
 let poolInitialized = false;
@@ -69,7 +69,7 @@ function processQueue() {
       // Recreate worker if crashed
       try {
         await idleWorkerInfo.worker.terminate();
-      } catch (e) {}
+      } catch (e) { }
       try {
         idleWorkerInfo.worker = await createSingleWorker(idleWorkerInfo.id);
       } catch (recreateErr) {

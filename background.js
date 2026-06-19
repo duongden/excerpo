@@ -1,8 +1,8 @@
 // background.js
 
-importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'scripts/source-utils.js');
+importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'sources/hetushu.js', 'scripts/source-utils.js');
 
-const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ];
+const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu];
 function getSource(url) {
   return SOURCES.find(s => s.pattern.test(url)) || null;
 }
@@ -494,10 +494,10 @@ async function parseOnTab(tabId, source, chapter, alertMsg) {
         for (let i = 0; i < lines.length; i++) {
           const line = lines[i];
           currentPara += line;
-          
+
           const lastChar = line.slice(-1);
           const terminalPunctuation = /['"”’。！？.!?…~>\]】]/;
-          
+
           if (line.length < 35 || terminalPunctuation.test(lastChar) || i === lines.length - 1) {
             paragraphs.push(currentPara);
             currentPara = "";
@@ -516,9 +516,12 @@ async function parseOnTab(tabId, source, chapter, alertMsg) {
       try {
         let completedCount = 0;
         const totalCount = result.dataUrls.length;
-        
+
         const ocrPromises = result.dataUrls.map(async (dataUrl, idx) => {
           try {
+            // if (idx < 3) {
+            //   console.log(`[BASE64 IMAGE - Đoạn ${idx} - ${title}] Mở trong tab mới để xem ảnh:\n`, dataUrl);
+            // }
             const ocrText = await runExternalOCR(dataUrl);
             // Mỗi thẻ p là một dòng văn bản. Xóa bỏ tất cả các ký tự xuống dòng thừa bên trong OCR của thẻ p đó
             const cleanedText = ocrText.replace(/\r?\n/g, '').trim();
