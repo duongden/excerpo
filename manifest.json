@@ -45,7 +45,11 @@
     "https://*.ixdzs.com/*",
     "https://book.qq.com/*",
     "https://*.book.qq.com/*",
-    "https://*.hetushu.com/*"
+    "https://*.hetushu.com/*",
+    "https://*.xbanxia.cc/*",
+    "https://*.xbanxia.com/*",
+    "https://*.69shumi.net/*",
+    "https://*.69shumi.com/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
