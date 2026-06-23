@@ -1,8 +1,8 @@
 // background.js
 
-importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'sources/hetushu.js', 'scripts/source-utils.js');
+importScripts('docx.js', 'jszip.js', 'sources/17k.js', 'sources/22biqu.js', 'sources/uukanshu.js', 'sources/jjwxc.js', 'sources/qidian.js', 'sources/biquge.js', 'sources/52shuku.js', 'sources/fanqienovel.js', 'sources/69shuba.js', 'sources/novel543.js', 'sources/kakuyomu.js', 'sources/syosetu.js', 'sources/pixiv.js', 'sources/ixdzs8.js', 'sources/bookqq.js', 'sources/hetushu.js', 'sources/xbanxia.js', 'sources/69shumi.js', 'scripts/source-utils.js');
 
-const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu];
+const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu, SourceXbanxia, Source69shumi];
 function getSource(url) {
   return SOURCES.find(s => s.pattern.test(url)) || null;
 }
