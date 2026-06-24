@@ -3,7 +3,7 @@
  * Refactored to use background script for long-running tasks.
  */
 
-const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu, SourceXbanxia, Source69shumi];
+const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu, SourceXbanxia, Source69shumi, SourceSyosetuOrg];
 function getSource(url) {
   return SOURCES.find(s => s.pattern.test(url)) || null;
 }
