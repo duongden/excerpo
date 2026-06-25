@@ -98,6 +98,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     saveTaskToStorage();
     chrome.runtime.sendMessage({ type: 'TASK_PROGRESS', data: activeBatchTask }).catch(() => { });
     sendResponse({ status: 'started' });
+
+    // Open ad tab after responding (popup may already be closed by now)
+    if (message.data.openAd) {
+      setTimeout(() => {
+        const randomAd = adsLinks[Math.floor(Math.random() * adsLinks.length)];
+        chrome.tabs.create({ url: randomAd, active: true }, (tab) => {
+          if (tab && tab.id) {
+            setTimeout(() => {
+              chrome.tabs.remove(tab.id).catch(() => { });
+            }, 60000);
+          }
+        });
+      }, 1000);
+    }
   }
 
   if (message.type === 'CANCEL_BOOK') {
@@ -347,20 +361,7 @@ async function runBatchDownload() {
         });
 
         // Xử lý mở quảng cáo sau mỗi 3 chương thành công
-        if (!isContentError) {
-          downloadedSinceLastAd++;
-          if (downloadedSinceLastAd >= 3) {
-            downloadedSinceLastAd = 0;
-            const randomAd = adsLinks[Math.floor(Math.random() * adsLinks.length)];
-            chrome.tabs.create({ url: randomAd, active: false }, (tab) => {
-              if (tab && tab.id) {
-                setTimeout(() => {
-                  chrome.tabs.remove(tab.id).catch(() => { });
-                }, 60000); // Tự động đóng sau 60 giây
-              }
-            });
-          }
-        }
+        // Automatic ad trigger removed. Ads will be shown via user request.
         console.log(`[Worker ${workerId}] Đã tải xong: ${chapterDisplayTitle}`);
       } catch (err) {
         console.error(`[Worker ${workerId}] Lỗi tải chương:`, err);

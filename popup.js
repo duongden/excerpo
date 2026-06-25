@@ -316,7 +316,7 @@ async function renderChapters(source, chapters, bookName, chapterDiv, tabId, url
 
     chrome.runtime.sendMessage({
       type: 'ADD_TO_BATCH_DOWNLOAD',
-      data: { chapters: enrichedChapters }
+      data: { chapters: enrichedChapters, openAd: true }
     }, (response) => {
       if (!response) {
         btnAll.disabled = false;
@@ -324,9 +324,7 @@ async function renderChapters(source, chapters, bookName, chapterDiv, tabId, url
       } else {
         btnAll.textContent = "🚀 Đã gửi! Đang tải nền...";
 
-        if (typeof window.switchTab === "function") {
-          window.switchTab("queue");
-        }
+        // Removed automatic switch to queue tab to keep ad tab active
 
         // Re-enable button after 2 seconds so user can crawl another book and queue it
         setTimeout(() => {
