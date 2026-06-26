@@ -50,7 +50,20 @@
     "https://*.xbanxia.com/*",
     "https://*.69shumi.net/*",
     "https://*.69shumi.com/*",
-    "https://*.syosetu.org/*"
+    "https://*.syosetu.org/*",
+    "https://www.xbiquge.com/*",
+    "https://xbiquge.com/*",
+    "https://www.23qb.net/*",
+    "https://23qb.net/*",
+    "https://www.shubaow.org/*",
+    "https://shubaow.org/*",
+    "https://www.royalroad.com/*",
+    "https://royalroad.com/*",
+    "https://www.scribblehub.com/*",
+    "https://scribblehub.com/*"
+    ,
+    "https://www.archiveofourown.org/*",
+    "https://archiveofourown.org/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
@@ -67,15 +80,33 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["tesseract/*"],
-      "matches": ["*://*/*"]
+      "resources": [
+        "tesseract/*"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
     }
   ],
   "content_scripts": [
     {
-      "matches": ["https://www.novel543.com/*"],
-      "js": ["scripts/novel543-content.js"],
+      "matches": [
+        "https://www.novel543.com/*"
+      ],
+      "js": [
+        "scripts/novel543-content.js"
+      ],
       "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://www.xbiquge.com/*",
+        "https://xbiquge.com/*"
+      ],
+      "js": [
+        "scripts/xbiquge-content.js"
+      ],
+      "run_at": "document_idle"
     }
   ],
   "background": {
