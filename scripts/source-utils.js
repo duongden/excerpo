@@ -131,15 +131,18 @@ async function parseContentInTab(tabId, contentConfig) {
     fallbacks = [],
     scriptUrl = null,
     remove    = [],
+    lineFilter = null,
   } = contentConfig;
 
   const [{ result }] = await chrome.scripting.executeScript({
     target: { tabId },
     world:  "MAIN",
-    args:   [selector, type, scriptUrl, JSON.stringify(fallbacks), JSON.stringify(remove)],
-    func: async (selector, type, scriptUrl, fallbacksJson, removeJson) => {
+    args:   [selector, type, scriptUrl, JSON.stringify(fallbacks), JSON.stringify(remove), lineFilter],
+    func: async (selector, type, scriptUrl, fallbacksJson, removeJson, lineFilterPattern) => {
       const fallbacks = JSON.parse(fallbacksJson);
       const removeArr = JSON.parse(removeJson);
+      const lineFilterRe = lineFilterPattern ? new RegExp(lineFilterPattern) : null;
+      const filterLine = (s) => s.length > 0 && (!lineFilterRe || !lineFilterRe.test(s));
       const debug = [`url: ${location.href}`, `type: ${type}`, `selector: ${selector}`];
 
       // ── Extract helpers ──────────────────────────────────────────────────
@@ -181,7 +184,7 @@ async function parseContentInTab(tabId, contentConfig) {
           const textRemove = [toRemove, "div"].filter(Boolean).join(",");
           if (textRemove) clone.querySelectorAll(textRemove).forEach(e => e.remove());
           clone.querySelectorAll("br").forEach(br => br.replaceWith("\n"));
-          const lines = clone.textContent.split("\n").map(s => s.trim()).filter(Boolean);
+          const lines = clone.textContent.split("\n").map(s => s.trim()).filter(filterLine);
           debug.push(`[text] found ${lines.length} lines`);
           return { paragraphs: lines };
         }

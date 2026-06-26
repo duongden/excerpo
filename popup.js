@@ -3,7 +3,7 @@
  * Refactored to use background script for long-running tasks.
  */
 
-const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu, SourceXbanxia, Source69shumi, SourceSyosetuOrg];
+const SOURCES = [Source17k, Source22biqu, SourceUukanshu, SourceJjwxc, SourceQidian, SourceBiquge, Source52shuku, SourceFanqienovel, Source69shuba, SourceNovel543, SourceKakuyomu, SourceSyosetu, SourceRoyalRoad, SourceScribbleHub, SourceAo3, SourcePixiv, SourceIxdzs8, SourceBookQQ, SourceHetushu, SourceXbanxia, Source69shumi, SourceSyosetuOrg, SourceXbiquge, Source23qb, SourceShubaow];
 function getSource(url) {
   return SOURCES.find(s => s.pattern.test(url)) || null;
 }
@@ -577,6 +577,40 @@ function setupEventListeners() {
       dom.urlInput.focus();
     });
   });
+
+  // Collapse long example lists and add a Show more / Collapse button
+  function setupExampleCollapsible(limit = 5) {
+    const containers = document.querySelectorAll('.examples > div');
+    containers.forEach(container => {
+      const spans = Array.from(container.querySelectorAll('.example-url'));
+      if (spans.length <= limit) return;
+      // hide extras
+      spans.forEach((s, idx) => {
+        if (idx >= limit) s.style.display = 'none';
+      });
+
+      let expanded = false;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = `Xem thêm (${spans.length - limit})`;
+      btn.style.cssText = 'display:block;margin-top:8px;padding:2px 6px;font-size:11px;color:#000;background:#fafafa;border:1px solid #ccc;border-radius:4px;cursor:pointer;';
+
+      btn.addEventListener('click', () => {
+        expanded = !expanded;
+        if (expanded) {
+          spans.forEach(s => s.style.display = 'inline-block');
+          btn.textContent = 'Thu gọn';
+        } else {
+          spans.forEach((s, idx) => { s.style.display = (idx >= limit) ? 'none' : 'inline-block'; });
+          btn.textContent = `Xem thêm (${spans.length - limit})`;
+        }
+      });
+
+      container.appendChild(btn);
+    });
+  }
+
+  setupExampleCollapsible(5);
 
   // Load initial settings
   chrome.storage.local.get(["cachedFolder", "cachedFormat", "cachedConflictAction", "chapterDelay", "cachedFileNameFormat"], (s) => {
