@@ -33,13 +33,22 @@ const SourcePo18 = {
         if (a && a.getAttribute("href")) {
           const href = a.getAttribute("href");
           fullUrl = href.startsWith("http") ? href : `https://www.po18.tw${href}`;
+        } else if (isVip && btn) {
+          const name = btn.getAttribute("name");
+          if (name && name.startsWith("pop_order")) {
+             const articleId = name.replace("pop_order", "");
+             const bookIdMatch = url.match(/books\/(\d+)/);
+             if (bookIdMatch) {
+               fullUrl = `https://www.po18.tw/books/${bookIdMatch[1]}/articles/${articleId}`;
+             }
+          }
         }
         
-        if (fullUrl || isVip) {
+        if (fullUrl) {
            result.push({
              chapter_number: n++,
              chapter_title: title,
-             chapter_url: fullUrl || "",
+             chapter_url: fullUrl,
              type: isVip ? "vip" : "normal"
            });
         }
