@@ -63,7 +63,9 @@
     "https://scribblehub.com/*"
     ,
     "https://www.archiveofourown.org/*",
-    "https://archiveofourown.org/*"
+    "https://archiveofourown.org/*",
+    "https://www.po18.tw/*",
+    "https://po18.tw/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
