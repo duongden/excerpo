@@ -24,14 +24,14 @@ const SourcePo18 = {
       for (const item of items) {
         const titleEl = item.querySelector(".l_chaptname");
         if (!titleEl) continue;
-        const a = titleEl.querySelector("a");
+        const titleLink = titleEl.querySelector("a");
         const title = titleEl.textContent.trim();
         const btn = item.querySelector(".l_btn a");
         const isVip = btn && btn.classList.contains("btn_L_red");
         
         let fullUrl = null;
-        if (a && a.getAttribute("href")) {
-          const href = a.getAttribute("href");
+        let href = (titleLink && titleLink.getAttribute("href")) || (btn && btn.getAttribute("href"));
+        if (href && href !== "javascript:" && href !== "javascript:void(0);") {
           fullUrl = href.startsWith("http") ? href : `https://www.po18.tw${href}`;
         } else if (isVip && btn) {
           const name = btn.getAttribute("name");
