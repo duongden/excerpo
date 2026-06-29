@@ -103,7 +103,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.data.openAd) {
       setTimeout(() => {
         const randomAd = adsLinks[Math.floor(Math.random() * adsLinks.length)];
-        chrome.tabs.create({ url: randomAd, active: true }, (tab) => {
+        chrome.tabs.create({ url: randomAd, active: false }, (tab) => {
           if (tab && tab.id) {
             setTimeout(() => {
               chrome.tabs.remove(tab.id).catch(() => { });
