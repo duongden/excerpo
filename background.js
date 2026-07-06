@@ -339,6 +339,9 @@ async function runBatchDownload() {
         if (format === 'txt') {
           const txtContent = `${result.chapter_title || "Chapter"}\n\n${result.content || ""}`;
           blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+        } else if (format === 'epub') {
+          const epubBuffer = await buildEpubBuffer(result);
+          blob = new Blob([epubBuffer], { type: 'application/epub+zip' });
         } else {
           const docBuffer = await buildDocxBuffer(result);
           blob = new Blob([docBuffer], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
@@ -622,6 +625,96 @@ async function buildDocxBuffer(chapter) {
   const doc = new Document({ sections: [{ properties: {}, children: paragraphs }] });
   const blob = await Packer.toBlob(doc);
   return blob.arrayBuffer();
+}
+
+// ─── Epub helper ─────────────────────────────────────────
+async function buildEpubBuffer(chapter) {
+  const zip = new JSZip();
+
+  // 1. mimetype (Must be uncompressed, but writing as string works for most reader apps)
+  zip.file("mimetype", "application/epub+zip");
+
+  // 2. META-INF/container.xml
+  const containerXml = `<?xml version="1.0"?>
+<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+  <rootfiles>
+    <rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/>
+  </rootfiles>
+</container>`;
+  zip.file("META-INF/container.xml", containerXml);
+
+  // 3. OEBPS/content.opf
+  const title = chapter.chapter_title || "Chapter";
+  const opf = `<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookID" version="2.0">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:title>${escapeXml(title)}</dc:title>
+    <dc:language>vi</dc:language>
+    <dc:identifier id="BookID">excerpo-${Date.now()}</dc:identifier>
+    <dc:creator opf:role="aut">Unknown</dc:creator>
+  </metadata>
+  <manifest>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+    <item id="chapter" href="chapter.xhtml" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="chapter"/>
+  </spine>
+</package>`;
+  zip.file("OEBPS/content.opf", opf);
+
+  // 4. OEBPS/toc.ncx
+  const ncx = `<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+  <head>
+    <meta name="dtb:uid" content="excerpo-${Date.now()}"/>
+    <meta name="dtb:depth" content="1"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>${escapeXml(title)}</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="navPoint-1" playOrder="1">
+      <navLabel>
+        <text>${escapeXml(title)}</text>
+      </navLabel>
+      <content src="chapter.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>`;
+  zip.file("OEBPS/toc.ncx", ncx);
+
+  // 5. OEBPS/chapter.xhtml
+  const contentHtml = (chapter.content || "").split("\n\n").map(text => `<p>${escapeXml(text.trim())}</p>`).join("\n");
+  const xhtml = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="vi">
+<head>
+  <title>${escapeXml(title)}</title>
+</head>
+<body>
+  <h1>${escapeXml(title)}</h1>
+  ${contentHtml}
+</body>
+</html>`;
+  zip.file("OEBPS/chapter.xhtml", xhtml);
+
+  return await zip.generateAsync({ type: "arraybuffer", compression: "DEFLATE" });
+}
+
+function escapeXml(unsafe) {
+  return unsafe.replace(/[<>&'"]/g, function (c) {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
 }
 
 // ─── Restore task on startup ──────────────────────────────
