@@ -82,7 +82,13 @@
     "https://*.fictionpress.com/*",
     "https://fictionpress.com/*",
     "https://*.foxaholic.com/*",
-    "https://foxaholic.com/*"
+    "https://foxaholic.com/*",
+    "https://m.shuhaige.net/*",
+    "https://*.shuhaige.net/*",
+    "https://www.powanjuan.cc/*",
+    "https://powanjuan.cc/*",
+    "https://*.fenrirscans.com/*",
+    "https://fenrirscans.com/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
