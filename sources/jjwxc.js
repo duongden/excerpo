@@ -5,10 +5,10 @@ const SourceJjwxc = {
   // ── Preview config ─────────────────────────────────────────────────────────
   preview: {
     fields: {
-      bookName:       "h1",
-      authorName:     "a[href*='oneauthor.php']",
-      coverImage:     { selector: "td img[width]", attr: ["_src", "src"] },
-      description:    {
+      bookName: "h1",
+      authorName: "a[href*='oneauthor.php']",
+      coverImage: { selector: "td img[width]", attr: ["_src", "src"] },
+      description: {
         custom: (doc) => {
           for (const td of doc.querySelectorAll("td")) {
             const t = td.textContent.trim();
@@ -38,13 +38,13 @@ const SourceJjwxc = {
       for (const row of rows) {
         const a = row.querySelector("span[itemprop='headline'] a[itemprop='url']");
         if (!a) continue;
-        const title  = a.textContent.trim();
-        const href   = a.getAttribute("href");
-        const rel    = a.getAttribute("rel");
+        const title = a.textContent.trim();
+        const href = a.getAttribute("href");
+        const rel = a.getAttribute("rel");
         const rawUrl = href || rel;
         if (!rawUrl) continue;
-        const isVip  = !!rel && !href;
-        const full   = (rawUrl.startsWith("http")
+        const isVip = !!rel && !href;
+        const full = (rawUrl.startsWith("http")
           ? rawUrl
           : `https://www.jjwxc.net/${rawUrl.replace(/^\//, "")}`)
           .replace(/^http:\/\//, "https://");
@@ -57,17 +57,18 @@ const SourceJjwxc = {
 
   // ── Content config ─────────────────────────────────────────────────────────
   content: {
-    // Chờ span thật xuất hiện (không phải wrapper rỗng)
-    readySelector: "#paragraph_comment_content .onebook_paragraph_comment_text",
-    type:          "spans",
-    selector:      "#paragraph_comment_content .onebook_paragraph_comment_text",
+    // Chờ span thật xuất hiện hoặc container có nội dung (thường có thẻ br phân đoạn)
+    readySelector: "#paragraph_comment_content .onebook_paragraph_comment_text | #paragraph_comment_content br",
+    type: "spans",
+    selector: "#paragraph_comment_content .onebook_paragraph_comment_text",
     fallbacks: [
+      { type: "text", selector: "#paragraph_comment_content" },
       { type: "text", selector: "div.novelbody div[style*='cursor']" },
       { type: "text", selector: "div.novelbody" }
     ]
   },
 
   // ── Public API (thin wrappers — for backward compat với popup.js) ──────────
-  parsePreview(html, url)          { return parsePreview(html, url, this.preview);           },
-  fetchChapters(url, progressCb)   { return parseChapters(url, this.chapters, progressCb);   },
+  parsePreview(html, url) { return parsePreview(html, url, this.preview); },
+  fetchChapters(url, progressCb) { return parseChapters(url, this.chapters, progressCb); },
 };
