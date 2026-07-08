@@ -75,7 +75,10 @@
     "https://www.archiveofourown.org/*",
     "https://archiveofourown.org/*",
     "https://www.po18.tw/*",
-    "https://po18.tw/*"
+    "https://po18.tw/*",
+    "https://novellunar.com/*",
+    "https://*.novellunar.com/*",
+    "https://img.novellunar.com/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
