@@ -88,7 +88,10 @@
     "https://www.powanjuan.cc/*",
     "https://powanjuan.cc/*",
     "https://*.fenrirscans.com/*",
-    "https://fenrirscans.com/*"
+    "https://fenrirscans.com/*",
+    "https://*.ranobelib.me/*",
+    "https://ranobelib.me/*",
+    "https://*.cdnlibs.org/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
