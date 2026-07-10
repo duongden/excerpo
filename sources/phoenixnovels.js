@@ -32,13 +32,29 @@ const SourcePhoenixNovels = {
         }
       },
       coverImage: {
-        custom: (doc) => {
+        custom: (doc, url) => {
           const img = doc.querySelector(".asura-coverwrap img, .summary_image img");
           if (!img) return null;
-          return img.src || img.getAttribute("data-src") || img.getAttribute("src") || null;
+          const rawSrc = img.getAttribute("data-src") || img.getAttribute("src") || "";
+          if (!rawSrc) return null;
+          if (rawSrc.startsWith("http")) return rawSrc;
+          // Ghép domain nếu là URL tương đối
+          try {
+            const base = new URL(url);
+            return new URL(rawSrc, base.origin).href;
+          } catch {
+            return rawSrc;
+          }
         }
       },
-      description: { selector: ".asura-synopsis | .description-summary .summary__content | .post-content", attr: "" },
+      description: {
+        custom: (doc) => {
+          const el = doc.querySelector(".asura-synopsis, .description-summary .summary__content, .post-content");
+          if (!el) return null;
+          const text = el.textContent.trim();
+          return text.length > 200 ? text.slice(0, 200) + "…" : text;
+        }
+      },
       sourceBookCode: {
         custom: (doc, url) => {
           const match = url.match(/manga\/([a-zA-Z0-9-]+)/);
