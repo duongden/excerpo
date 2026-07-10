@@ -240,53 +240,6 @@ async function parseContentInTab(tabId, contentConfig) {
           }
         }
 
-        if (t === 'ranobelib') {
-          try {
-            const rawText = document.body.textContent || '';
-            const data = JSON.parse(rawText);
-            if (data && data.data && data.data.content) {
-              const content = data.data.content;
-              let ps = [];
-              if (content.content) {
-                // Nested JSON paragraphs structure
-                const parseParagraphs = (node) => {
-                  let results = [];
-                  if (node && typeof node === 'object') {
-                    if (node.type === 'paragraph' && node.content) {
-                      const text = node.content.map(c => c.text || '').join('');
-                      if (text.trim()) results.push(text.trim());
-                    } else if (Array.isArray(node)) {
-                      for (const item of node) {
-                        results = results.concat(parseParagraphs(item));
-                      }
-                    } else {
-                      for (const val of Object.values(node)) {
-                        results = results.concat(parseParagraphs(val));
-                      }
-                    }
-                  }
-                  return results;
-                };
-                ps = parseParagraphs(content);
-              } else if (typeof content === 'string') {
-                // HTML content
-                const tempDoc = new DOMParser().parseFromString(content, 'text/html');
-                ps = Array.from(tempDoc.querySelectorAll('p')).map(p => p.textContent.trim()).filter(Boolean);
-                if (ps.length === 0) {
-                  ps = content.split('\n').map(p => p.trim()).filter(Boolean);
-                }
-              }
-              debug.push(`RanobeLib parse success, extracted ${ps.length} paragraphs`);
-              return { paragraphs: ps };
-            } else {
-              throw new Error("Không có nội dung data.content trong body text");
-            }
-          } catch (err) {
-            debug.push(`Lỗi parse RanobeLib JSON: ${err.message}`);
-            return null;
-          }
-        }
-
         if (t === 'ocr') {
           const logs = [];
           const loadScript = (src) => new Promise((resolve, reject) => {
