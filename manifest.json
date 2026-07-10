@@ -91,7 +91,12 @@
     "https://fenrirscans.com/*",
     "https://*.ranobelib.me/*",
     "https://ranobelib.me/*",
-    "https://*.cdnlibs.org/*"
+    "https://*.cdnlibs.org/*",
+    "https://*.centralnovel.com/*",
+    "https://centralnovel.com/*",
+    "https://i0.wp.com/*",
+    "https://*.phoenixnovels.com.br/*",
+    "https://phoenixnovels.com.br/*"
   ],
   "icons": {
     "16": "icons/icon16.png",

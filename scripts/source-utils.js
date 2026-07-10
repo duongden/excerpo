@@ -164,6 +164,82 @@ async function parseContentInTab(tabId, contentConfig) {
           return { paragraphs: lines };
         }
 
+        if (t === 'svg_text') {
+          // Trích xuất văn bản từ ảnh SVG dạng data:image/svg+xml
+          const container = document.querySelector(sel);
+          debug.push(`[svg_text] container: ${!!container}`);
+          if (!container) return null;
+
+          const imgs = Array.from(container.querySelectorAll('img[src^="data:image/svg+xml"]'));
+          debug.push(`[svg_text] found ${imgs.length} SVG images`);
+          if (!imgs.length) return null;
+
+          function extractTextFromSVGDataUrl(dataUrl) {
+            try {
+              const encoded = dataUrl.replace(/^data:image\/svg\+xml;charset=UTF-8,/, '');
+              const svgStr = decodeURIComponent(encoded);
+              const parser = new DOMParser();
+              const svgDoc = parser.parseFromString(svgStr, 'image/svg+xml');
+
+              // Ghép các tspan thành dòng rồi thành đoạn văn
+              // Dòng mới khi có attribute x (hoặc x=28 bắt đầu dòng)
+              // Đoạn mới khi dòng chứa chỉ dấu cách trắng (y không liên tục)
+              const tspans = Array.from(svgDoc.querySelectorAll('tspan'));
+              const lineMap = new Map();
+
+              let prevY = null;
+              let currentLine = '';
+              const rawLines = [];
+
+              for (const ts of tspans) {
+                const y = ts.getAttribute('y');
+                const word = ts.textContent;
+                if (y !== null) {
+                  // Bắt đầu dòng mới khi có attribute y
+                  if (currentLine !== '' || rawLines.length > 0) {
+                    rawLines.push({ y: prevY, text: currentLine });
+                  }
+                  currentLine = word;
+                  prevY = parseInt(y, 10);
+                } else {
+                  // Tiếp tục nối vào dòng hiện tại
+                  currentLine += word;
+                }
+              }
+              if (currentLine !== '') {
+                rawLines.push({ y: prevY, text: currentLine });
+              }
+
+              // Ghép thành đoạn văn: dòng chỉ chứa khoảng trắng là dòng trống (ngăn cách đoạn)
+              const paragraphs = [];
+              let currentPara = [];
+              for (const { text } of rawLines) {
+                const trimmed = text.replace(/\u00A0/g, ' ').replace(/\u200B/g, '').trim();
+                if (!trimmed) {
+                  if (currentPara.length > 0) {
+                    paragraphs.push(currentPara.join(''));
+                    currentPara = [];
+                  }
+                } else {
+                  currentPara.push(trimmed);
+                }
+              }
+              if (currentPara.length > 0) paragraphs.push(currentPara.join(''));
+              return paragraphs;
+            } catch (e) {
+              return [];
+            }
+          }
+
+          const allParagraphs = [];
+          for (const img of imgs) {
+            const ps = extractTextFromSVGDataUrl(img.getAttribute('src'));
+            allParagraphs.push(...ps);
+          }
+          debug.push(`[svg_text] extracted ${allParagraphs.length} paragraphs`);
+          return { paragraphs: allParagraphs.filter(Boolean) };
+        }
+
         const container = document.querySelector(sel);
         debug.push(`[${t}] container: ${!!container}`);
         if (!container) return null;
