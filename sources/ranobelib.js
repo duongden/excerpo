@@ -6,14 +6,58 @@ const SourceRanobelib = {
   // ── Preview config ────────────────────────────────────────────────────────
   preview: {
     fields: {
-      bookName: { custom: (doc) => doc.querySelector('meta[property="og:title"]')?.getAttribute("content") || doc.querySelector("h1")?.textContent.trim() || "Ranobelib Book" },
-      authorName: {
+      bookName: {
         custom: (doc) => {
-          const links = Array.from(doc.querySelectorAll("a[href*='/people/']"));
-          return links.map(a => a.textContent.trim()).filter(Boolean).join(", ") || null;
+          // Tránh lấy tiêu đề generic của website khi đang load
+          const ogTitle = doc.querySelector('meta[property="og:title"]')?.getAttribute("content");
+          if (ogTitle && ogTitle !== "RanobeLib" && !ogTitle.toLowerCase().includes("ranobelib")) {
+            return ogTitle.trim();
+          }
+          const h1 = doc.querySelector("h1");
+          if (h1) {
+            const title = h1.textContent.trim();
+            if (title && title !== "RanobeLib" && !title.toLowerCase().includes("ranobelib")) {
+              return title;
+            }
+          }
+          return null; // Trả về null để vòng lặp của popup.js tiếp tục chờ đến khi trang render xong
         }
       },
-      coverImage: { selector: ".cover__wrap img, #app .cover__wrap > img", attr: "src" },
+      authorName: {
+        custom: (doc) => {
+          // Tìm phần tử có nhãn 'Автор' (Tác giả tiếng Nga) hoặc 'Author'
+          const items = Array.from(doc.querySelectorAll('.ahz_e, .media-info-list__item'));
+          for (const item of items) {
+            const label = item.querySelector('.ahz_cy, .media-info-list__item-title')?.textContent.trim();
+            if (label === 'Автор' || label === 'Author') {
+              const link = item.querySelector('.ahz_bi a, .media-info-list__item-value a');
+              if (link) return link.textContent.trim();
+            }
+          }
+          // Dự phòng tìm các link người/tác giả
+          const links = Array.from(doc.querySelectorAll("a[href*='/people/'], a[href*='/author/']"));
+          const names = links.map(a => a.textContent.trim()).filter(Boolean);
+          return names.length > 0 ? names.join(", ") : null;
+        }
+      },
+      coverImage: {
+        custom: (doc) => {
+          const img = doc.querySelector(".cover__wrap img, #app .cover__wrap > img, img.media-sidebar__cover");
+          if (!img) return null;
+          return img.src || img.getAttribute("src") || null;
+        }
+      },
+      description: {
+        custom: (doc) => {
+          const descEl = doc.querySelector(".text-collapse .text-content, .media-summary__text, .media-description__text");
+          if (!descEl) return null;
+          const paragraphs = Array.from(descEl.querySelectorAll("p, .node-paragraph"));
+          if (paragraphs.length > 0) {
+            return paragraphs.map(p => p.textContent.trim()).filter(Boolean).join("\n\n");
+          }
+          return descEl.textContent.trim();
+        }
+      },
       sourceBookCode: {
         custom: (doc, url) => {
           const match = url.match(/book\/([a-zA-Z0-9-]+)/);
