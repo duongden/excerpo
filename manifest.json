@@ -97,7 +97,19 @@
     "https://centralnovel.com/*",
     "https://i0.wp.com/*",
     "https://*.phoenixnovels.com.br/*",
-    "https://phoenixnovels.com.br/*"
+    "https://phoenixnovels.com.br/*",
+    "https://*.meionovel.id/*",
+    "https://meionovel.id/*",
+    "https://*.meionovels.com/*",
+    "https://meionovels.com/*",
+    "https://*.novelgo.id/*",
+    "https://novelgo.id/*",
+    "https://*.wbnovel.com/*",
+    "https://wbnovel.com/*",
+    "https://*.chireads.com/*",
+    "https://chireads.com/*",
+    "https://*.lnmtl.com/*",
+    "https://lnmtl.com/*"
   ],
   "icons": {
     "16": "icons/icon16.png",
