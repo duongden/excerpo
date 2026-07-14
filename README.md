@@ -27,10 +27,12 @@ Mục đích chính của công cụ là phục vụ cho nhu cầu lưu trữ of
   - <img src="https://flagcdn.com/w20/cn.png" width="16" alt="CN"> **Trung Quốc (Giản thể):** `17k`, `22biqu`, `23qb`, `52shuku`, `69shuba`, `69shumi`, `biquge`, `xbiquge`, `bookqq`, `fanqienovel`, `hetushu`, `ihuaben`, `ixdzs8`, `jjwxc`, `novel543`, `powanjuan`, `qidian`, `shubaow`, `shuhaige`, `uukanshu`, `xbanxia`.
   - <img src="https://flagcdn.com/w20/tw.png" width="16" alt="TW"> **Đài Loan (Phồn thể):** `po18`, `sto9`, `sto55`, `ttkan`, `twkan`.
   - <img src="https://flagcdn.com/w20/jp.png" width="16" alt="JP"> **Nhật Bản:** `kakuyomu`, `pixiv`, `syosetu`, `syosetu.org`.
-  - <img src="https://flagcdn.com/w20/us.png" width="16" alt="US"> **Âu Mỹ / Toàn cầu:** `ao3`, `fictionpress`, `foxaholic`, `novellunar`, `royalroad`, `scribblehub`.
+  - <img src="https://flagcdn.com/w20/us.png" width="16" alt="US"> **Âu Mỹ / Toàn cầu:** `ao3`, `fictionpress`, `foxaholic`, `lnmtl`, `novellunar`, `royalroad`, `scribblehub`.
   - <img src="https://flagcdn.com/w20/tr.png" width="16" alt="TR"> **Thổ Nhĩ Kỳ:** `fenrirscans`.
   - <img src="https://flagcdn.com/w20/ru.png" width="16" alt="RU"> **Nga:** `ranobelib`.
   - <img src="https://flagcdn.com/w20/br.png" width="16" alt="BR"> **Brazil:** `centralnovel`, `phoenixnovels`.
+  - <img src="https://flagcdn.com/w20/id.png" width="16" alt="ID"> **Indonesia:** `meionovel`, `novelgo`, `wbnovel`.
+  - <img src="https://flagcdn.com/w20/fr.png" width="16" alt="FR"> **Pháp:** `chireads`.
 * **Auto-Bypass Rate Limit & Captcha:** Tích hợp OCR (Tesseract.js) chạy ngầm để đọc và khi cào dữ liệu, cũng như thuật toán delay thông minh tránh bị chặn IP.
 * **Tải ngầm đa luồng:** Hoạt động độc lập bằng Service Worker dưới nền. Bạn có thể lướt web bình thường, tắt tab, tool vẫn kiên nhẫn tải hàng ngàn chương mà không lo đứt gãy.
 * **Tuỳ biến File & Định dạng linh hoạt:** Cho phép trích xuất ra định dạng văn bản chuẩn `.txt` hoặc tệp Word `.docx` cực nhẹ. Hỗ trợ tự do cấu hình quy tắc đặt tên file (VD: `chuong-{index}_{title}`).
