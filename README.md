@@ -3,7 +3,7 @@
 # <img src="icons/icon48.png" height="36" align="center" alt="Excerpo Icon" /> Excerpo
 **Công cụ trích xuất và tải truyện/text tự động từ đa nền tảng**
 
-[![Version](https://img.shields.io/badge/version-1.2.26-blue.svg)](#)
+[![Version](https://img.shields.io/badge/version-1.26.2-blue.svg)](#)
 [![Platform](https://img.shields.io/badge/platform-Chrome%20|%20Edge%20|%20Cốc%20Cốc-brightgreen.svg)](#)
 [![License](https://img.shields.io/badge/license-Personal%20Use-red.svg)](#)
 
