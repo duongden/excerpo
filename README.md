@@ -4,7 +4,8 @@
 **Công cụ trích xuất và tải truyện/text tự động từ đa nền tảng**
 
 [![Version](https://img.shields.io/badge/version-1.26.2-blue.svg)](#)
-[![Platform](https://img.shields.io/badge/platform-Chrome%20|%20Edge%20|%20Cốc%20Cốc-brightgreen.svg)](#)
+[![Browser](https://img.shields.io/badge/browser-Chrome%20%7C%20Edge%20%7C%20Cốc%20Cốc%20%7C%20Brave%20%7C%20Opera%20%7C%20Vivaldi-brightgreen.svg)](#)
+[![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue.svg)](#)
 [![License](https://img.shields.io/badge/license-Personal%20Use-red.svg)](#)
 
 </div>
